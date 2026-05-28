@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Master — Data Structures & Algorithms</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --p: #3C3489;
+  --p-light: #5B52D6;
+  --p-glow: rgba(60,52,137,0.15);
+  --bg: #0F0E1A;
+  --bg2: #16152A;
+  --bg3: #1E1C35;
+  --surface: #232140;
+  --surface2: #2A2850;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --text: #E8E6FF;
+  --text2: #A09CC2;
+  --text3: #635E8A;
+  --green: #2DD4A1;
+  --red: #F87474;
+  --yellow: #F5C06A;
+  --blue: #60A5FA;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Inter', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 10%, rgba(60,52,137,0.25) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 50% at 85% 80%, rgba(45,212,161,0.06) 0%, transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(15,14,26,0.88);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; height: 60px;
+}
+.logo { font-family: var(--mono); font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: .5px; }
+.logo span { color: var(--p-light); }
+.nav-tabs { display: flex; gap: 4px; }
+.nav-tab {
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  color: var(--text3); background: none; border: none;
+  padding: 6px 16px; border-radius: 8px; cursor: pointer; transition: all .2s;
+}
+.nav-tab:hover { color: var(--text2); background: var(--bg3); }
+.nav-tab.active { color: var(--text); background: var(--surface); border: 1px solid var(--border2); }
+
+/* LAYOUT */
+.wrap { max-width: 1100px; margin: 0 auto; padding: 40px 24px; position: relative; z-index: 1; }
+.section { display: none; animation: fadeUp .35s ease; }
+.section.active { display: block; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* HOME */
+.hero { text-align: center; padding: 70px 20px 60px; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-family: var(--mono);
+  color: var(--green); background: rgba(45,212,161,0.1);
+  border: 1px solid rgba(45,212,161,0.2);
+  padding: 4px 14px; border-radius: 20px; margin-bottom: 24px;
+}
+.hero h1 {
+  font-size: clamp(26px, 4vw, 44px); font-weight: 700; line-height: 1.25;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #E8E6FF 0%, #A09CC2 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hero p { color: var(--text2); font-size: 16px; max-width: 520px; margin: 0 auto 36px; }
+.hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn-primary {
+  padding: 12px 28px; font-size: 14px; font-weight: 600;
+  background: var(--p); color: #fff; border: 1px solid var(--p-light);
+  border-radius: 10px; cursor: pointer; transition: all .2s; font-family: var(--sans);
+}
+.btn-primary:hover { background: var(--p-light); transform: translateY(-1px); box-shadow: 0 8px 24px var(--p-glow); }
+.btn-secondary {
+  padding: 12px 28px; font-size: 14px; font-weight: 600;
+  background: var(--surface); color: var(--text2); border: 1px solid var(--border2);
+  border-radius: 10px; cursor: pointer; transition: all .2s; font-family: var(--sans);
+}
+.btn-secondary:hover { background: var(--surface2); color: var(--text); }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 48px; }
+.card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 24px; transition: border-color .2s, transform .2s;
+}
+.card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.card-icon { font-size: 28px; margin-bottom: 12px; }
+.card h3 { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+.card p { font-size: 13px; color: var(--text2); line-height: 1.5; }
+
+/* TABLE */
+.section-head { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; }
+.section-title { font-size: 20px; font-weight: 700; }
+.section-sub { font-size: 13px; color: var(--text3); margin-top: 3px; }
+.filter-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.filter-btn {
+  font-size: 12px; padding: 5px 14px; border-radius: 20px;
+  border: 1px solid var(--border2); background: var(--surface); color: var(--text2);
+  cursor: pointer; transition: all .15s; font-family: var(--sans);
+}
+.filter-btn:hover:not(.active) { background: var(--surface2); color: var(--text); }
+.filter-btn.active { background: var(--p); border-color: var(--p-light); color: #fff; }
+.diff-legend { display: flex; gap: 20px; flex-wrap: wrap; font-size: 11px; color: var(--text3); margin-bottom: 16px; }
+.table-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; table-layout: fixed; min-width: 700px; }
+thead tr { background: var(--surface); }
+th {
+  font-size: 11px; font-weight: 600; color: var(--text3);
+  text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border);
+  white-space: nowrap; letter-spacing: .4px; text-transform: uppercase;
+}
+td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: middle; font-size: 12px; }
+tr:last-child td { border-bottom: none; }
+tbody tr { transition: background .15s; }
+tbody tr:hover td { background: rgba(255,255,255,0.03); }
+tr.row-fix td { background: rgba(245,192,106,0.04); }
+tr.row-fix td:first-child::before { content: '★ '; color: var(--yellow); font-size: 10px; }
+tr.row-new td { background: rgba(45,212,161,0.04); }
+tr.row-new td:first-child::before { content: '+ '; color: var(--green); font-weight: 600; }
+.badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 9px; border-radius: 20px; white-space: nowrap; }
+.b-basic  { background: rgba(45,212,161,0.12); color: var(--green); }
+.b-array  { background: rgba(91,82,214,0.2);   color: #A89DFA; }
+.b-ll     { background: rgba(96,165,250,0.15);  color: var(--blue); }
+.b-stack  { background: rgba(167,243,208,0.1);  color: #6EE7B7; }
+.b-hash   { background: rgba(245,192,106,0.15); color: var(--yellow); }
+.b-bst    { background: rgba(248,116,116,0.12); color: #FCA5A5; }
+.b-heap   { background: rgba(248,135,200,0.1);  color: #F9A8D4; }
+.b-sort   { background: rgba(160,156,194,0.1);  color: var(--text2); }
+.b-graph  { background: rgba(248,116,116,0.1);  color: #FCA5A5; }
+.o { font-family: var(--mono); font-size: 11px; font-weight: 600; }
+.o1    { color: var(--green); }
+.ologn { color: var(--blue); }
+.on    { color: var(--yellow); }
+.onlogn{ color: #F97316; }
+.on2   { color: var(--red); }
+.omisc { color: var(--text2); }
+.note  { font-size: 11px; color: var(--text3); }
+.tc-legend {
+  display: flex; flex-wrap: wrap; gap: 16px;
+  padding: 14px 18px; border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--text3); background: var(--bg2);
+}
+
+/* QUIZ */
+.quiz-wrap { max-width: 600px; margin: 0 auto; }
+.quiz-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 32px; }
+.quiz-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.quiz-prog-wrap { flex: 1; height: 4px; background: var(--surface); border-radius: 4px; margin: 0 16px; }
+.quiz-prog { height: 100%; background: var(--p-light); border-radius: 4px; transition: width .4s; }
+.quiz-count { font-size: 12px; color: var(--text3); font-family: var(--mono); white-space: nowrap; }
+.quiz-score-badge {
+  font-size: 12px; font-family: var(--mono);
+  color: var(--green); background: rgba(45,212,161,0.1);
+  border: 1px solid rgba(45,212,161,0.2);
+  padding: 3px 12px; border-radius: 20px; white-space: nowrap;
+}
+.quiz-tag {
+  display: inline-block; font-size: 10px; font-weight: 600; font-family: var(--mono);
+  padding: 2px 10px; border-radius: 20px; margin-bottom: 14px;
+}
+.tag-array  { background: rgba(91,82,214,0.2); color: #A89DFA; }
+.tag-ll     { background: rgba(96,165,250,0.15); color: var(--blue); }
+.tag-stack  { background: rgba(167,243,208,0.1); color: #6EE7B7; }
+.tag-bst    { background: rgba(248,116,116,0.12); color: #FCA5A5; }
+.tag-heap   { background: rgba(248,135,200,0.1); color: #F9A8D4; }
+.tag-sort   { background: rgba(160,156,194,0.1); color: var(--text2); }
+.tag-graph  { background: rgba(248,116,116,0.1); color: #FCA5A5; }
+.tag-hash   { background: rgba(245,192,106,0.15); color: var(--yellow); }
+.tag-general{ background: rgba(45,212,161,0.12); color: var(--green); }
+.quiz-q { font-size: 16px; font-weight: 600; line-height: 1.55; margin-bottom: 20px; color: var(--text); }
+.quiz-code {
+  font-family: var(--mono); font-size: 13px;
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 12px 16px; color: #A89DFA;
+  margin-bottom: 20px; display: block; white-space: pre; overflow-x: auto;
+}
+.options { display: flex; flex-direction: column; gap: 10px; }
+.opt {
+  padding: 13px 18px; background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 10px; cursor: pointer; font-size: 14px; font-family: var(--sans);
+  color: var(--text2); text-align: left; transition: all .2s;
+}
+.opt:hover:not(:disabled) { background: var(--surface2); color: var(--text); border-color: var(--p-light); }
+.opt.correct { background: rgba(45,212,161,0.12); border-color: var(--green); color: var(--green); }
+.opt.wrong   { background: rgba(248,116,116,0.1);  border-color: var(--red); color: var(--red); }
+.opt:disabled { cursor: default; }
+.quiz-explain {
+  margin-top: 16px; padding: 12px 16px; background: var(--surface);
+  border-radius: 8px; font-size: 13px; color: var(--text2); line-height: 1.65;
+  border-left: 3px solid var(--p-light); display: none;
+}
+.quiz-next {
+  margin-top: 20px; width: 100%; padding: 13px; font-size: 14px; font-weight: 600;
+  background: var(--p); color: #fff; border: 1px solid var(--p-light);
+  border-radius: 10px; cursor: pointer; font-family: var(--sans);
+  transition: all .2s; display: none;
+}
+.quiz-next:hover { background: var(--p-light); }
+.result-screen { text-align: center; padding: 12px 0; }
+.result-ring {
+  width: 100px; height: 100px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 24px; font-size: 22px; font-weight: 700; font-family: var(--mono);
+  position: relative;
+}
+.result-ring::before { content: ''; position: absolute; inset: 8px; border-radius: 50%; background: var(--bg2); }
+.result-ring span { position: relative; z-index: 1; }
+.result-msg { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+.result-sub { font-size: 14px; color: var(--text2); margin-bottom: 8px; }
+.result-breakdown { font-size: 13px; color: var(--text3); margin-bottom: 28px; }
+
+@media (max-width: 600px) {
+  .wrap { padding: 24px 16px; }
+  .hero { padding: 40px 0 32px; }
+  .quiz-card { padding: 20px; }
+  th, td { padding: 8px 10px; }
+  .nav-tab { padding: 6px 10px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo">DS<span>&</span>Algo</div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-tab="home">Home</button>
+      <button class="nav-tab" data-tab="table">Complexity Table</button>
+      <button class="nav-tab" data-tab="quiz">Quiz</button>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- HOME -->
+  <div id="home" class="section active">
+    <div class="hero">
+      <div class="hero-badge"><span>●</span> Data Structures & Algorithms Reference</div>
+      <h1>Master Time & Space<br>Complexity</h1>
+      <p>A complete, lecture-corrected complexity reference table plus an interactive quiz to test your understanding.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" data-goto="table">Browse Complexity Table</button>
+        <button class="btn-secondary" data-goto="quiz">Start the Quiz</button>
+      </div>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <h3>Full Complexity Table</h3>
+        <p>Covers Arrays, Linked Lists, Trees, Heaps, Sorting, Graphs and more — with corrections and additions from lecture notes.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎯</div>
+        <h3>Interactive Quiz</h3>
+        <p>47 questions across all topics with instant explanations for every answer — right or wrong.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <h3>Quick Filtering</h3>
+        <p>Jump to any data structure in one click — Array, BST, Heap, Graph, Sorting and more.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div id="table" class="section">
+    <div class="section-head">
+      <div>
+        <div class="section-title">Time & Space Complexity Reference</div>
+        <div class="section-sub">Best · Average · Worst · Space — corrected & extended from lecture notes</div>
+      </div>
+    </div>
+    <div class="filter-row" id="filterRow"></div>
+    <div class="diff-legend">
+      <span><span style="color:var(--yellow)">★</span> Corrected from lectures</span>
+      <span><span style="color:var(--green)">+</span> New addition</span>
+    </div>
+    <div class="table-box">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:23%">Operation / Structure</th>
+              <th style="width:12%">Category</th>
+              <th style="width:9%">Best</th>
+              <th style="width:9%">Avg</th>
+              <th style="width:9%">Worst</th>
+              <th style="width:9%">Space</th>
+              <th style="width:29%">Note</th>
+            </tr>
+          </thead>
+          <tbody id="tcBody"></tbody>
+        </table>
+      </div>
+      <div class="tc-legend">
+        <span><span class="o o1">O(1)</span> Constant</span>
+        <span><span class="o ologn">O(log n)</span> Logarithmic</span>
+        <span><span class="o on">O(n)</span> Linear</span>
+        <span><span class="o onlogn">O(n log n)</span> Linearithmic</span>
+        <span><span class="o on2">O(n²)</span> Quadratic</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quiz" class="section">
+    <div class="quiz-wrap">
+      <div style="margin-bottom:20px">
+        <div class="section-title">Knowledge Check</div>
+        <div class="section-sub">47 questions — Data Structures & Time Complexity</div>
+      </div>
+      <div class="quiz-card" id="quizCard"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── NAV ──
+document.querySelectorAll('.nav-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+    if (btn.dataset.tab === 'quiz' && cur === 0 && !answered) loadQ();
+  });
+});
+document.querySelectorAll('[data-goto]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const t = btn.dataset.goto;
+    document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelector(`.nav-tab[data-tab="${t}"]`).classList.add('active');
+    document.getElementById(t).classList.add('active');
+    if (t === 'quiz' && cur === 0 && !answered) loadQ();
+  });
+});
+
+// ── TABLE ──
+const CATS = {
+  all:'All',basic:'Basic Ops',array:'Array',ll:'Linked List',
+  stack:'Stack / Queue',hash:'Hash Table',bst:'BST',heap:'Heap',sort:'Sorting',graph:'Graph'
+};
+const BADGE = {
+  basic:'b-basic',array:'b-array',ll:'b-ll',stack:'b-stack',
+  hash:'b-hash',bst:'b-bst',heap:'b-heap',sort:'b-sort',graph:'b-graph'
+};
+const LABELS = {
+  '1':'O(1)','logn':'O(log n)','n':'O(n)','nlogn':'O(n log n)',
+  'n2':'O(n²)','nk':'O(n·k)','VE':'O(V+E)','ElogV':'O(E log V)',
+  'V2':'O(V²)','Dm':'O(D)','VV':'O(V²)'
+};
+const COLORS = {'1':'o1','logn':'ologn','n':'on','nlogn':'onlogn','n2':'on2'};
+
+const rows = [
+  {cat:'basic',name:'Swap (two variables)',b:'1',a:'1',w:'1',s:'1',note:'3 constant assignment steps',isNew:true},
+  {cat:'basic',name:'Summation — single loop',b:'n',a:'n',w:'n',s:'1',note:'One pass over all elements',isNew:true},
+  {cat:'basic',name:'Summation — direct formula',b:'1',a:'1',w:'1',s:'1',note:'e.g. n(n+1)/2, no loop needed',isNew:true},
+  {cat:'basic',name:'Nested loops',b:'n2',a:'n2',w:'n2',s:'1',note:'Two nested loops over n',isNew:true},
+  {cat:'array',name:'Access by index',b:'1',a:'1',w:'1',s:'n',note:'Direct address calculation'},
+  {cat:'array',name:'Search (linear)',b:'1',a:'n',w:'n',s:'1',note:'Sequential scan'},
+  {cat:'array',name:'Find Maximum',b:'n',a:'n',w:'n',s:'1',note:'Must scan every element',isNew:true},
+  {cat:'array',name:'Insert / Delete',b:'1',a:'n',w:'n',s:'1',note:'Shifting elements required'},
+  {cat:'ll',name:'Access (head)',b:'1',a:'1',w:'1',s:'n',note:'First node is directly available'},
+  {cat:'ll',name:'Access (arbitrary node)',b:'n',a:'n',w:'n',s:'n',note:'No index — must traverse from head',isFix:true},
+  {cat:'ll',name:'Search',b:'1',a:'n',w:'n',s:'1',note:''},
+  {cat:'ll',name:'Insert at head',b:'1',a:'1',w:'1',s:'1',note:''},
+  {cat:'ll',name:'Insert at tail',b:'1',a:'n',w:'n',s:'1',note:'O(1) if tail pointer exists'},
+  {cat:'ll',name:'Delete (general)',b:'1',a:'n',w:'n',s:'1',note:''},
+  {cat:'ll',name:'Tail Deletion — Singly LL',b:'n',a:'n',w:'n',s:'1',note:'Must reach the second-to-last node',isNew:true},
+  {cat:'ll',name:'Tail Deletion — Doubly LL',b:'1',a:'1',w:'1',s:'1',note:'prev pointer available directly',isNew:true},
+  {cat:'stack',name:'Push / Pop / Peek',b:'1',a:'1',w:'1',s:'n',note:'LIFO principle'},
+  {cat:'stack',name:'Enqueue / Dequeue',b:'1',a:'1',w:'1',s:'n',note:'FIFO principle'},
+  {cat:'hash',name:'Insert / Search / Delete',b:'1',a:'1',w:'n',s:'n',note:'Worst case: all keys in one bucket'},
+  {cat:'bst',name:'Search / Insert',b:'logn',a:'logn',w:'n',s:'n',note:'Worst case: completely skewed tree'},
+  {cat:'bst',name:'Delete',b:'logn',a:'logn',w:'n',s:'n',note:''},
+  {cat:'bst',name:'AVL / Red-Black (search)',b:'logn',a:'logn',w:'logn',s:'n',note:'Self-balancing guarantees O(log n)'},
+  {cat:'heap',name:'Insert',b:'1',a:'logn',w:'logn',s:'n',note:'Heapify up'},
+  {cat:'heap',name:'Extract Min / Max',b:'logn',a:'logn',w:'logn',s:'1',note:'Heapify down'},
+  {cat:'heap',name:'Peek (top element)',b:'1',a:'1',w:'1',s:'1',note:'Root is always accessible'},
+  {cat:'heap',name:'Build Heap',b:'n',a:'n',w:'n',s:'1',note:'Faster than n individual inserts'},
+  {cat:'heap',name:'Heap-Increase-Key',b:'1',a:'logn',w:'logn',s:'1',note:'Update value then heapify up',isNew:true},
+  {cat:'sort',name:'Selection Sort',b:'n2',a:'n2',w:'n2',s:'1',note:'Not adaptive'},
+  {cat:'sort',name:'Bubble Sort',b:'n',a:'n2',w:'n2',s:'1',note:'Best case: already sorted'},
+  {cat:'sort',name:'Insertion Sort',b:'n',a:'n2',w:'n2',s:'1',note:'Excellent for nearly-sorted data'},
+  {cat:'sort',name:'Merge Sort',b:'nlogn',a:'nlogn',w:'nlogn',s:'n',note:'Stable, requires auxiliary space'},
+  {cat:'sort',name:'Quick Sort',b:'nlogn',a:'nlogn',w:'n2',s:'logn',note:'Worst: sorted array + bad pivot'},
+  {cat:'sort',name:'Heap Sort',b:'nlogn',a:'nlogn',w:'nlogn',s:'1',note:'In-place, not stable'},
+  {cat:'sort',name:'Counting Sort',b:'nk',a:'nk',w:'nk',s:'nk',note:'k = range of input values'},
+  {cat:'graph',name:'BFS / DFS',b:'VE',a:'VE',w:'VE',s:'V',note:'V = vertices, E = edges'},
+  {cat:'graph',name:'Dijkstra (min-heap)',b:'ElogV',a:'ElogV',w:'ElogV',s:'V',note:'No negative-weight edges'},
+  {cat:'graph',name:'Dijkstra (adjacency matrix)',b:'VV',a:'VV',w:'VV',s:'V',note:'Simple lecture version',isNew:true},
+  {cat:'graph',name:'Bellman-Ford',b:'VE',a:'VE',w:'VE',s:'V',note:'Handles negative-weight edges'},
+  {cat:'graph',name:'Adjacency Matrix — Space',b:'V2',a:'V2',w:'V2',s:'V2',note:'V × V matrix',isNew:true},
+  {cat:'graph',name:'Adjacency Matrix — list neighbors',b:'V2',a:'V2',w:'V2',s:'1',note:'Must scan entire row O(V)',isNew:true},
+  {cat:'graph',name:'Adjacency Matrix — check edge?',b:'1',a:'1',w:'1',s:'1',note:'Direct lookup: matrix[u][v]',isNew:true},
+  {cat:'graph',name:'Adjacency List — Space',b:'VE',a:'VE',w:'VE',s:'VE',note:'O(V + E)',isNew:true},
+  {cat:'graph',name:'Adjacency List — list neighbors',b:'Dm',a:'Dm',w:'Dm',s:'1',note:'D = degree of the vertex',isNew:true},
+];
+
+function oc(v) {
+  const l = LABELS[v] || `O(${v})`;
+  const c = COLORS[v] || 'omisc';
+  return `<span class="o ${c}">${l}</span>`;
+}
+function renderTable(f) {
+  const data = f === 'all' ? rows : rows.filter(r => r.cat === f);
+  document.getElementById('tcBody').innerHTML = data.map(r => {
+    const cls = r.isFix ? 'row-fix' : r.isNew ? 'row-new' : '';
+    return `<tr class="${cls}">
+      <td style="font-weight:500">${r.name}</td>
+      <td><span class="badge ${BADGE[r.cat]}">${CATS[r.cat]}</span></td>
+      <td>${oc(r.b)}</td><td>${oc(r.a)}</td><td>${oc(r.w)}</td><td>${oc(r.s)}</td>
+      <td class="note">${r.note}</td>
+    </tr>`;
+  }).join('');
+}
+const fr = document.getElementById('filterRow');
+Object.entries(CATS).forEach(([k, v]) => {
+  const btn = document.createElement('button');
+  btn.className = 'filter-btn' + (k === 'all' ? ' active' : '');
+  btn.textContent = v;
+  btn.dataset.f = k;
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderTable(k);
+  });
+  fr.appendChild(btn);
+});
+renderTable('all');
+
+// ── QUIZ (47 questions from morequestions.txt) ──
+const RAW = [
+  {t:'Basic Ops',q:'What is the time complexity of swapping two variables?',opts:['O(1)','O(n)','O(log n)','O(n²)'],a:0,exp:'Swap uses 3 constant assignment steps regardless of data size → O(1).'},
+  {t:'Basic Ops',q:'What is the time complexity of a single summation loop from 1 to n?',opts:['O(1)','O(log n)','O(n)','O(n²)'],a:2,exp:'The loop iterates exactly n times → linear O(n).'},
+  {t:'Basic Ops',q:'What is the time complexity of computing sum using the formula n(n+1)/2?',opts:['O(n)','O(1)','O(log n)','O(n²)'],a:1,exp:'A single arithmetic expression regardless of n → O(1).'},
+  {t:'Basic Ops',q:'What is the time complexity of two nested loops each running n times?',opts:['O(n)','O(n log n)','O(n²)','O(2n)'],a:2,exp:'Two nested loops → n × n = O(n²).'},
+  {t:'Basic Ops',q:'What is the space complexity of swapping two variables (no extra array)?',opts:['O(n)','O(1)','O(log n)','O(n²)'],a:1,exp:'Only one temporary variable is used → O(1).'},
+
+  {t:'Array',q:'What is the time complexity of accessing an element by index in an array?',opts:['O(n)','O(log n)','O(1)','O(n²)'],a:2,exp:'Arrays store elements at contiguous addresses → direct index access in O(1).'},
+  {t:'Array',q:'What is the time complexity of linear search in an unsorted array?',opts:['O(1)','O(log n)','O(n log n)','O(n)'],a:3,exp:'Worst case = element is last or missing → must scan all elements O(n).'},
+  {t:'Array',q:'What is the time complexity of finding the maximum element in an array?',opts:['O(1)','O(log n)','O(n)','O(n²)'],a:2,exp:'Must visit every element to be sure of the maximum → O(n).'},
+  {t:'Array',q:'What is the time complexity of inserting an element at the beginning of an array?',opts:['O(1)','O(log n)','O(n)','O(n²)'],a:2,exp:'All existing elements must shift one position right → O(n).'},
+  {t:'Array',q:'What is the time complexity of binary search on a sorted array?',opts:['O(n)','O(log n)','O(1)','O(n log n)'],a:1,exp:'Each step halves the search space → O(log n).'},
+
+  {t:'Linked List',q:'What is the time complexity of accessing the head node in a linked list?',opts:['O(n)','O(log n)','O(1)','O(n²)'],a:2,exp:'The head pointer is available directly → O(1).'},
+  {t:'Linked List',q:'What is the time complexity of accessing an arbitrary node in a singly linked list?',opts:['O(1)','O(log n)','O(n)','O(n²)'],a:2,exp:'No index exists — must traverse from head → O(n).'},
+  {t:'Linked List',q:'What is the time complexity of inserting at the head of a linked list?',opts:['O(n)','O(1)','O(log n)','O(n²)'],a:1,exp:'Just update the head pointer → O(1).'},
+  {t:'Linked List',q:'What is the time complexity of tail deletion in a singly linked list?',opts:['O(1)','O(log n)','O(n)','O(n²)'],a:2,exp:'Must reach the second-to-last node by traversal → O(n).'},
+  {t:'Linked List',q:'What is the time complexity of tail deletion in a doubly linked list?',opts:['O(n)','O(1)','O(log n)','O(n²)'],a:1,exp:'The prev pointer is available directly → single operation O(1).'},
+  {t:'Linked List',q:'What is the time complexity of searching for a value in a linked list?',opts:['O(1)','O(log n)','O(n)','O(n²)'],a:2,exp:'Worst case: element is last or missing → O(n).'},
+
+  {t:'Stack/Queue',q:'What is the time complexity of push operation in a stack?',opts:['O(n)','O(log n)','O(n²)','O(1)'],a:3,exp:'Add directly to the top → O(1).'},
+  {t:'Stack/Queue',q:'What is the time complexity of pop operation in a stack?',opts:['O(n)','O(1)','O(log n)','O(n²)'],a:1,exp:'Remove the top directly → O(1).'},
+  {t:'Stack/Queue',q:'What is the time complexity of enqueue in a queue?',opts:['O(n²)','O(n)','O(1)','O(log n)'],a:2,exp:'Add to the tail directly → O(1).'},
+  {t:'Stack/Queue',q:'What is the time complexity of dequeue in a queue?',opts:['O(log n)','O(1)','O(n)','O(n²)'],a:1,exp:'Remove from the front directly → O(1).'},
+
+  {t:'Hash Table',q:'What is the average time complexity of search in a hash table?',opts:['O(n)','O(log n)','O(1)','O(n²)'],a:2,exp:'On average, the hash function maps directly to the bucket → O(1).'},
+  {t:'Hash Table',q:'What is the worst case time complexity of search in a hash table?',opts:['O(1)','O(log n)','O(n)','O(n²)'],a:2,exp:'Worst case: all keys collide into the same bucket → O(n).'},
+
+  {t:'BST',q:'What is the time complexity of searching for an element in a BST?',opts:['O(1)','O(log n)','O(n)','O(n²)'],a:2,exp:'Worst case = unbalanced tree like a linked list → O(n). Average = O(log n).'},
+  {t:'BST',q:'What is the average time complexity of inserting into a BST?',opts:['O(1)','O(log n)','O(n)','O(n²)'],a:1,exp:'In a balanced tree, each step halves the problem → O(log n).'},
+  {t:'BST',q:'What is the worst case time complexity of BST insertion?',opts:['O(log n)','O(n log n)','O(n)','O(1)'],a:2,exp:'Inserting already-sorted elements makes the tree a chain → O(n).'},
+  {t:'BST',q:'What is the time complexity of search/insert in an AVL tree?',opts:['O(n)','O(n²)','O(log n)','O(1)'],a:2,exp:'AVL is always balanced → guaranteed O(log n) in all cases.'},
+
+  {t:'Heap',q:'What is the time complexity of inserting into a max-heap?',opts:['O(1)','O(n)','O(log n)','O(n²)'],a:2,exp:'Insert at the end then heapify up → O(log n).'},
+  {t:'Heap',q:'What is the time complexity of extract-max from a max-heap?',opts:['O(1)','O(log n)','O(n)','O(n²)'],a:1,exp:'Remove root, place last element at root, heapify down → O(log n).'},
+  {t:'Heap',q:'What is the time complexity of Build Max-Heap?',opts:['O(1)','O(log n)','O(n)','O(n²)'],a:2,exp:'Bottom-up heapify approach = O(n), not O(n log n).'},
+  {t:'Heap',q:'What is the time complexity of peeking at the max element in a max-heap?',opts:['O(n)','O(log n)','O(n²)','O(1)'],a:3,exp:'Root is always at index 0 → direct access O(1).'},
+  {t:'Heap',q:'What is the time complexity of Heap-Increase-Key?',opts:['O(n)','O(1)','O(log n)','O(n²)'],a:2,exp:'Update the value then heapify up → O(log n).'},
+
+  {t:'Sorting',q:'What is the best case time complexity of Bubble Sort?',opts:['O(n)','O(1)','O(log n)','O(n²)'],a:0,exp:'Bubble Sort detects a sorted array after the first pass and stops → Best case O(n).'},
+  {t:'Sorting',q:'What is the worst case time complexity of Quick Sort?',opts:['O(n log n)','O(n)','O(n²)','O(log n)'],a:2,exp:'Worst = pivot is always the largest/smallest element (sorted array) → O(n²).'},
+  {t:'Sorting',q:'What is the time complexity of Merge Sort in all cases?',opts:['O(n)','O(n²)','O(n log n)','O(log n)'],a:2,exp:'Merge Sort is consistent: Best/Average/Worst = O(n log n).'},
+  {t:'Sorting',q:'What is the space complexity of Merge Sort?',opts:['O(1)','O(log n)','O(n)','O(n²)'],a:2,exp:'Requires an auxiliary array of size n for merging → O(n) space.'},
+  {t:'Sorting',q:'What is the time complexity of Heap Sort?',opts:['O(n)','O(n²)','O(n log n)','O(1)'],a:2,exp:'n extract-max operations each costing O(log n) → O(n log n).'},
+  {t:'Sorting',q:'What is the time complexity of Selection Sort in all cases?',opts:['O(n)','O(n log n)','O(log n)','O(n²)'],a:3,exp:'Selection Sort is not adaptive — always O(n²) regardless of input order.'},
+  {t:'Sorting',q:'What is the best case time complexity of Insertion Sort?',opts:['O(n²)','O(n)','O(log n)','O(1)'],a:1,exp:'Already-sorted array → each element is already in place → O(n).'},
+  {t:'Sorting',q:'What is the worst case time complexity of Insertion Sort?',opts:['O(n)','O(n log n)','O(n²)','O(log n)'],a:2,exp:'Reverse-sorted array → every element moves all the way to the front → O(n²).'},
+
+  {t:'Graph',q:'What is the time complexity of BFS on a graph?',opts:['O(V)','O(E)','O(V+E)','O(V×E)'],a:2,exp:'Each vertex and each edge is visited once → O(V+E).'},
+  {t:'Graph',q:'What is the time complexity of Dijkstra using a simple array?',opts:['O(n)','O(E log V)','O(V log E)','O(V²)'],a:3,exp:'Without a heap: searching for the minimum vertex each iteration → O(V²).'},
+  {t:'Graph',q:'What is the time complexity of Dijkstra using a min-heap?',opts:['O(V²)','O(E log V)','O(V log E)','O(VE)'],a:1,exp:'With min-heap: each edge triggers a decrease-key → O(E log V).'},
+  {t:'Graph',q:'What is the space complexity of an Adjacency Matrix for V vertices?',opts:['O(V)','O(V+E)','O(E)','O(V²)'],a:3,exp:'A V×V matrix = O(V²) even if the graph has very few edges.'},
+  {t:'Graph',q:'What is the time complexity of checking if edge (u,v) exists in Adjacency Matrix?',opts:['O(V)','O(E)','O(1)','O(log V)'],a:2,exp:'Direct lookup: matrix[u][v] → O(1).'},
+  {t:'Graph',q:'What is the time complexity of finding all neighbors of a vertex in Adjacency Matrix?',opts:['O(1)','O(E)','O(V)','O(log V)'],a:2,exp:'Must scan the entire row (V columns) → O(V).'},
+  {t:'Graph',q:'What is the space complexity of an Adjacency List for V vertices and E edges?',opts:['O(V²)','O(V)','O(E)','O(V+E)'],a:3,exp:'V lists + total edges across all lists = O(V+E).'},
+  {t:'Graph',q:'What is the time complexity of finding neighbors of a vertex in Adjacency List?',opts:['O(V)','O(E)','O(degree)','O(1)'],a:2,exp:'Only iterate over direct neighbors → O(D) where D = degree of the vertex.'},
+];
+
+// Map category names to CSS tag classes
+const TAG_MAP = {
+  'Basic Ops':'tag-general','Array':'tag-array','Linked List':'tag-ll',
+  'Stack/Queue':'tag-stack','Hash Table':'tag-hash','BST':'tag-bst',
+  'Heap':'tag-heap','Sorting':'tag-sort','Graph':'tag-graph'
+};
+
+const questions = RAW.map(r => ({
+  tag: r.t,
+  tagClass: TAG_MAP[r.t] || 'tag-general',
+  q: r.q,
+  options: r.opts,
+  answer: r.a,
+  explain: r.exp
+}));
+
+let cur = 0, score = 0, answered = false;
+
+function loadQ() { cur = 0; score = 0; answered = false; renderQ(); }
+
+function renderQ() {
+  if (cur >= questions.length) { renderResult(); return; }
+  answered = false;
+  const q = questions[cur];
+  const pct = (cur / questions.length * 100).toFixed(0);
+  const opts = q.options.map((o, i) =>
+    `<button class="opt" onclick="pick(this,${i})">${o}</button>`
+  ).join('');
+  document.getElementById('quizCard').innerHTML = `
+    <div class="quiz-meta">
+      <span class="quiz-count">${cur + 1} / ${questions.length}</span>
+      <div class="quiz-prog-wrap"><div class="quiz-prog" style="width:${pct}%"></div></div>
+      <span class="quiz-score-badge">★ ${score}</span>
+    </div>
+    <span class="quiz-tag ${q.tagClass}">${q.tag.toUpperCase()}</span>
+    <div class="quiz-q">${q.q}</div>
+    <div class="options">${opts}</div>
+    <div class="quiz-explain" id="explain">💡 ${q.explain}</div>
+    <button class="quiz-next" id="nextBtn" onclick="advance()">
+      ${cur < questions.length - 1 ? 'Next Question →' : 'See Results 🎯'}
+    </button>
+  `;
+}
+
+function pick(el, idx) {
+  if (answered) return;
+  answered = true;
+  const correct = questions[cur].answer;
+  document.querySelectorAll('.opt').forEach((o, i) => {
+    o.disabled = true;
+    if (i === correct) o.classList.add('correct');
+  });
+  if (idx === correct) score++;
+  else el.classList.add('wrong');
+  document.getElementById('explain').style.display = 'block';
+  document.getElementById('nextBtn').style.display = 'block';
+  document.querySelector('.quiz-score-badge').textContent = `★ ${score}`;
+}
+
+function advance() { cur++; renderQ(); }
+
+function renderResult() {
+  const pct = Math.round(score / questions.length * 100);
+  const deg = pct * 3.6;
+  const msg = pct >= 90 ? '🏆 Outstanding! You\'re exam-ready!' :
+              pct >= 70 ? '🎉 Great work! Almost perfect.' :
+              pct >= 50 ? '👍 Good effort — review the table.' :
+                          '📚 Keep studying — you\'ll get there!';
+  const color = pct >= 70 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--red)';
+  document.getElementById('quizCard').innerHTML = `
+    <div class="result-screen">
+      <div class="result-ring" style="background: conic-gradient(${color} ${deg}deg, var(--surface) ${deg}deg)">
+        <span>${score}/${questions.length}</span>
+      </div>
+      <div class="result-msg">${msg}</div>
+      <div class="result-sub">${pct}% correct answers</div>
+      <div class="result-breakdown">${score} correct · ${questions.length - score} incorrect</div>
+      <button class="btn-primary" onclick="loadQ()">Try Again</button>
+    </div>
+  `;
+}
+
+loadQ();
+</script>
+</body>
+</html>
